@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+  <div class="row mt-5 d-flex justify-content-center">
+    <h1>Lorem ipsum dolor sit amet.</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla possimus repellat
+      vitae blanditiis mollitia commodi temporibus fugiat deserunt asperiores libero ratione,
+      deleniti impedit aspernatur voluptatem recusandae aliquam nisi voluptate adipisci.</p>
+  </div>
+
+  <div class="row">
+    <div class="col-4">
+      <div class="card" style="width: 18rem;">
+        <img src="{% static "src/img/logo.png" %}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
