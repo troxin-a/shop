@@ -1,0 +1,171 @@
+[
+    {
+        "model": "catalog.product",
+        "pk": 2,
+        "fields": {
+            "name": "Однодневные контактные линзы",
+            "description": "Однодневные контактные линзы",
+            "image": "",
+            "category": 2,
+            "price": 2061,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 3,
+        "fields": {
+            "name": "Цветные контактные линзы",
+            "description": "Цветные контактные линзы",
+            "image": "",
+            "category": 2,
+            "price": 1371,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 4,
+        "fields": {
+            "name": "Раствор для линз",
+            "description": "Раствор для линз",
+            "image": "",
+            "category": 2,
+            "price": 91,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 5,
+        "fields": {
+            "name": "Фурацилин",
+            "description": "Фурацилин",
+            "image": "",
+            "category": 4,
+            "price": 80,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 6,
+        "fields": {
+            "name": "Аптечка",
+            "description": "Аптечка",
+            "image": "",
+            "category": 4,
+            "price": 483,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 7,
+        "fields": {
+            "name": "Жгут кровоостанавливающий",
+            "description": "Жгут кровоостанавливающий",
+            "image": "",
+            "category": 4,
+            "price": 44,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 8,
+        "fields": {
+            "name": "Виброцил",
+            "description": "Виброцил",
+            "image": "",
+            "category": 6,
+            "price": 515,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 9,
+        "fields": {
+            "name": "Цетиризин",
+            "description": "Цетиризин",
+            "image": "",
+            "category": 6,
+            "price": 50,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 10,
+        "fields": {
+            "name": "Зодак",
+            "description": "Зодак",
+            "image": "",
+            "category": 6,
+            "price": 205,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 11,
+        "fields": {
+            "name": "Укропная вода",
+            "description": "Укропная вода",
+            "image": "",
+            "category": 5,
+            "price": 307,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 12,
+        "fields": {
+            "name": "Саб симплекс",
+            "description": "Саб симплекс",
+            "image": "",
+            "category": 5,
+            "price": 350,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 13,
+        "fields": {
+            "name": "Гель для бритья",
+            "description": "Гель для бритья",
+            "image": "",
+            "category": 1,
+            "price": 200,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    },
+    {
+        "model": "catalog.product",
+        "pk": 14,
+        "fields": {
+            "name": "Станок для бритья",
+            "description": "Станок для бритья",
+            "image": "",
+            "category": 1,
+            "price": 700,
+            "created_at": "2024-07-08",
+            "updated_at": "2024-07-08"
+        }
+    }
+]
