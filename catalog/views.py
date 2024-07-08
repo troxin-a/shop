@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from catalog.models import Product
+from catalog.models import Contacts, Product
 
 
 def index(request):
@@ -23,8 +23,11 @@ def contacts(request):
         print(name, email, text, sep="\n")
 
         return HttpResponseRedirect(reverse('catalog:index'))
+    
+    contacts = Contacts.objects.all()
 
     context = {
         "title": "Аптека-лека КОНТАКТЫ",
+        "contacts": contacts,
     }
     return render(request, "catalog/contacts.html", context)

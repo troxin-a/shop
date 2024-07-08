@@ -70,3 +70,26 @@ class Product(models.Model):
         verbose_name = "продукт"
         verbose_name_plural = "Продукты"
         ordering = ("id",)
+
+
+class Contacts(models.Model):
+    address = models.TextField(
+        verbose_name="Адрес",
+        help_text="Введите адрес",
+    )
+    phone = models.CharField(
+        max_length=15,
+        verbose_name="Телефон",
+        help_text="Введите Телефон",
+    )
+    email = models.EmailField(
+        verbose_name="email",
+        help_text="Введите email",
+    )
+
+    def __str__(self) -> str:
+        return self.address
+
+    class Meta:
+        verbose_name = "контакт"
+        verbose_name_plural = "Контакты"

@@ -1,0 +1,20 @@
+[
+    {
+        "model": "catalog.contacts",
+        "pk": 1,
+        "fields": {
+            "address": "Ленина, 1",
+            "phone": "8-800-888-88-88",
+            "email": "info@leka.com"
+        }
+    },
+    {
+        "model": "catalog.contacts",
+        "pk": 2,
+        "fields": {
+            "address": "Мира, 198 офис 19",
+            "phone": "8-800-2000-600",
+            "email": "trototo@leka.ru"
+        }
+    }
+]

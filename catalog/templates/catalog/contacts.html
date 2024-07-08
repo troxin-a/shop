@@ -7,24 +7,26 @@
         <div class="col-5">
             <div class="card text-center">
                 <h1 class="card-header">Контакты</h1>
+                {% for contact in contacts %}
                 <div class="card-body">
                     <table class="table">
                         <tbody>
                         <tr>
                             <td>Адрес</td>
-                            <td>Ленина, 1</td>
+                            <td>{{ contact.address }}</td>
                         </tr>
                         <tr>
                             <td>Телефон</td>
-                            <td>8-800-888-88-88</td>
+                            <td>{{ contact.phone }}</td>
                         </tr>
                         <tr>
                             <td>email</td>
-                            <td>info@leka.com</td>
+                            <td>{{ contact.email }}</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
+                {% endfor %}
             </div>
         </div>
     </div>

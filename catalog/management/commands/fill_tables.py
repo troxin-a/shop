@@ -2,7 +2,7 @@ import json
 import os
 from django.core.management import BaseCommand
 
-from catalog.models import Category, Product
+from catalog.models import Category, Contacts, Product
 from config.settings import BASE_DIR
 
 
@@ -22,16 +22,26 @@ class Command(BaseCommand):
             encoding="UTF-8",
         ) as file:
             return json.load(file)
+        
+    @staticmethod
+    def json_read_contacts():
+        with open(
+            os.path.join(BASE_DIR, "fixtures", "catalog", "contacts.json"),
+            encoding="UTF-8",
+        ) as file:
+            return json.load(file)
 
     def handle(self, *args, **options):
 
         # Удаляем все продукты и категории
         Product.objects.all().delete()
         Category.objects.all().delete()
+        Contacts.objects.all().delete()
 
         # Пустые списки для хранения объектов
         product_for_create = []
         category_for_create = []
+        contacts_for_create = []
 
         # Обходим все значения категорий из фиктсуры для получения информации об одном объекте
         for category in Command.json_read_categories():
@@ -69,3 +79,16 @@ class Command(BaseCommand):
 
         # Создаем объекты в базе с помощью метода bulk_create()
         Product.objects.bulk_create(product_for_create)
+
+
+        # Обходим все значения контактов из фиктсуры для получения информации об одном объекте
+        for contact in Command.json_read_contacts():
+            address = contact["fields"].get("address")
+            phone = contact["fields"].get("phone")
+            email = contact["fields"].get("email")
+            contacts_for_create.append(
+                Contacts(address=address, phone=phone, email=email)
+            )
+
+        # Создаем объекты в базе с помощью метода bulk_create()
+        Contacts.objects.bulk_create(contacts_for_create)
