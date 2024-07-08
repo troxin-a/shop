@@ -53,6 +53,10 @@ class Product(models.Model):
     updated_at = models.DateField(
         auto_now=True, editable=False, verbose_name="Дата изменения",
     )
+    manufactured_at = models.DateField(
+        verbose_name="Дата производства",
+        **NULLABLE,
+    )
 
     def __str__(self) -> str:
         return self.name
