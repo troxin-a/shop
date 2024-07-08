@@ -2,8 +2,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from catalog.models import Product
+
 
 def index(request):
+    last_products = Product.objects.order_by("-id")[:5]
+    print(*last_products, sep="\n")
+
     context = {
         "title": "Аптека-лека ГЛАВНАЯ",
     }

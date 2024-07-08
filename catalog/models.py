@@ -1,3 +1,4 @@
+from pyclbr import Class
 from django.db import models
 
 NULLABLE = {"null": True, "blank": True}
@@ -10,7 +11,9 @@ class Category(models.Model):
         help_text="Введите название категории",
     )
     description = models.TextField(
-        verbose_name="Описание", help_text="Введите описание категории", **NULLABLE,
+        verbose_name="Описание",
+        help_text="Введите описание категории",
+        **NULLABLE,
     )
 
     def __str__(self) -> str:
@@ -28,7 +31,9 @@ class Product(models.Model):
         help_text="Введите название продукта",
     )
     description = models.TextField(
-        verbose_name="Описание", help_text="Введите описание продукта", **NULLABLE,
+        verbose_name="Описание",
+        help_text="Введите описание продукта",
+        **NULLABLE,
     )
     image = models.ImageField(
         upload_to="products/",
@@ -45,13 +50,17 @@ class Product(models.Model):
         **NULLABLE,
     )
     price = models.IntegerField(
-        verbose_name="Цена", help_text="Введите цену продукта", default=0,
+        verbose_name="Цена",
+        help_text="Введите цену продукта",
+        default=0,
     )
     created_at = models.DateField(
-        auto_now_add=True, editable=False, verbose_name="Дата создания",
+        auto_now_add=True,
+        verbose_name="Дата создания",
     )
     updated_at = models.DateField(
-        auto_now=True, editable=False, verbose_name="Дата изменения",
+        auto_now=True,
+        verbose_name="Дата изменения",
     )
 
     def __str__(self) -> str:
