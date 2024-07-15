@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <h2 class="display-5">{{ product.name }}</h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-4">
+        {% if product.image %}
+          <img src="{{ product.image|media_filter }}" class="card-img-top" alt="{{ product.name }}" />
+        {% endif %}
+      </div>
+
+      <div class="col-8">        
+        <p class="lead">{{ product.description }}</p>
+        <p class="lead">{{ product.price }} руб.</p>
+        <a href="{% url 'catalog:index' %}" class="btn btn-primary">Назад</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

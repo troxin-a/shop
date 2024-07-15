@@ -10,7 +10,9 @@ app_name = CatalogConfig.name
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("contacts", views.contacts, name="contacts"),
+    path("product/<int:pk>/", views.detail, name="detail"),
+    path("add/", views.add_product, name="add"),
+    path("contacts/", views.contacts, name="contacts"),
 ]
 
 if DEBUG:
