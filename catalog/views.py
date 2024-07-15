@@ -6,13 +6,24 @@ from catalog.models import Contacts, Product
 
 
 def index(request):
-    last_products = Product.objects.order_by("-id")[:5]
-    print(*last_products, sep="\n")
+    products = Product.objects.order_by("-id")
 
     context = {
         "title": "Аптека-лека ГЛАВНАЯ",
+        "objects_list": products,
     }
     return render(request, "catalog/index.html", context)
+
+
+def detail(request, pk):
+    product = Product.objects.get(pk=pk)
+    title = f"Аптека-лека: {product}"
+
+    context = {
+        "title": title,
+        "product": product,
+    }
+    return render(request, "catalog/detail.html", context)
 
 
 def contacts(request):
@@ -22,8 +33,8 @@ def contacts(request):
         text = request.POST.get("text")
         print(name, email, text, sep="\n")
 
-        return HttpResponseRedirect(reverse('catalog:index'))
-    
+        return HttpResponseRedirect(reverse("catalog:index"))
+
     contacts = Contacts.objects.all()
 
     context = {
