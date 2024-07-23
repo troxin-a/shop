@@ -9,10 +9,12 @@ from config.settings import DEBUG
 app_name = CatalogConfig.name
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("product/<int:pk>/", views.detail, name="detail"),
-    path("add/", views.add_product, name="add"),
-    path("contacts/", views.contacts, name="contacts"),
+    path("", views.ProductListView.as_view(), name="index"),
+    path("product/<int:pk>/", views.ProductDetailView.as_view(), name="detail"),
+    path("create/", views.ProductCreateView.as_view(), name="create"),
+    path("update/<int:pk>/", views.ProductUpdateView.as_view(), name="update"),
+    path("contacts/", views.ContactListView.as_view(), name="contacts"),
+    path("delete/<int:pk>/", views.ProductDeleteView.as_view(), name="delete"),
 ]
 
 if DEBUG:

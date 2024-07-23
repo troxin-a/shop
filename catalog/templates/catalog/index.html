@@ -10,7 +10,7 @@
     </div>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mb-4 mh-100">
-      {% for object in objects_list %}
+      {% for object in page_obj %}
         <div class="col">
           <div class="card min-h-100">
             {% if object.image %}
@@ -27,13 +27,13 @@
       {% endfor %}
     </div>
 
-    {% if objects_list %}
+    {% if page_obj %}
       <nav>
         <ul class="pagination">
-          <li class="page-item {% if not objects_list.has_previous %}disabled{% endif %}">
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
             <a class="page-link" href="
-            {% if objects_list.has_previous %}
-              {% url 'catalog:index' %}?page={{ objects_list.previous_page_number }}
+            {% if page_obj.has_previous %}
+              {% url 'catalog:index' %}?page={{ page_obj.previous_page_number }}
             {% else %}
               #
             {% endif %}
@@ -41,18 +41,18 @@
             aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
           </li>
 
-          {% for page in objects_list.paginator.page_range %}
-            {% if page <= objects_list.number|add:2 and page >= objects_list.number|add:-2 %}
-              <li class="page-item {% if page == objects_list.number %}active{% endif %}">
+          {% for page in page_obj.paginator.page_range %}
+            {% if page <= page_obj.number|add:2 and page >= page_obj.number|add:-2 %}
+              <li class="page-item {% if page == page_obj.number %}active{% endif %}">
                 <a class="page-link" href="{% url 'catalog:index' %}?page={{ page }}">{{ page }}</a>
               </li>
             {% endif %}
           {% endfor %}
 
-          <li class="page-item  {% if not objects_list.has_next %}disabled{% endif %}">
+          <li class="page-item  {% if not page_obj.has_next %}disabled{% endif %}">
             <a class="page-link" href="
-            {% if objects_list.has_next %}
-              {% url 'catalog:index' %}?page={{ objects_list.next_page_number }}"
+            {% if page_obj.has_next %}
+              {% url 'catalog:index' %}?page={{ page_obj.next_page_number }}"
             {% else %}
               #
             {% endif %}
