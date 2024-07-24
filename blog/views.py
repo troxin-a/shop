@@ -32,11 +32,11 @@ class ArticleDetailView(DetailView):
         object.views_count += 1
         object.save()
 
-        if object.views_count == 22:
+        if object.views_count == 100:
             send_congratulation(object)
 
-        if not object.is_published:
-            raise Http404("Статья не найдена или не опубликована")
+        # if not object.is_published:
+        #     raise Http404("Статья не найдена или не опубликована")
 
         return object
 
