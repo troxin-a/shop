@@ -19,8 +19,9 @@
       </div>
 
       <div class="col-8">        
-        <p class="lead">{{ product.description }}</p>
-        <p class="lead">{{ product.price }} руб.</p>
+        <p class="lead">Категория: {{ product.category }}</p>
+        <p class="lead">Описание: {{ product.description }}</p>
+        <p class="lead">Цена {{ product.price }} руб.</p>
         <a href="{% url 'catalog:index' %}" class="btn btn-primary">Назад</a>
         <a href="{% url 'catalog:update' product.pk %}" class="btn btn-warning">Редактировать</a>
         <a href="{% url 'catalog:delete' product.pk %}" class="btn btn-danger">Удалить</a>

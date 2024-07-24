@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="d-flex justify-content-center m-4">
+        <div>
+            <h2 class="display-5">{{ object.title|capfirst }}</h2>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+      {% if object.preview %}
+        <div class="mb-4" style="width: 700px; height: auto;">
+            <img src="{{ object.preview|media_filter }}" class="card-img-top" alt="{{ object.title }}" />
+          </div>
+      {% endif %} 
+      <div class="col-12">         
+        <p class="lead">{{ object.content }}</p>
+
+        <p class="lead">Дата публикации: {{ object.published_at }}</p>
+        <p class="lead">Просмотров: {{ object.views_count }}</p>
+        <a href="{% url 'blog:list' %}" class="btn btn-primary">Назад</a>
+        <a href="{% url 'blog:update' article.pk %}" class="btn btn-warning">Редактировать</a>
+        <a href="{% url 'blog:delete' article.pk %}" class="btn btn-danger">Удалить</a>
+    </div>
+  </div>
+{% endblock %}

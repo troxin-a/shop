@@ -12,15 +12,19 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mb-4 mh-100">
       {% for object in page_obj %}
         <div class="col">
-          <div class="card min-h-100">
+          <div class="card" style="height: 470px;">            
             {% if object.image %}
-              <img src="{{ object.image|media_filter }}" class="card-img-top" alt="{{ object.name }}" />
+            <div class="d-flex justify-content-center" style="height: 180px;">
+              <img src="{{ object.image|media_filter }}" class="card-img-top" style="height: 100%; width: auto; max-width: 100%;" alt="{{ object.name }}" />
             {% endif %}
+            </div>
             <div class="card-body">
-              <p class="card-text">{{ object.name }}</p>
-              <p class="card-text">{{ object.description|truncatechars:100 }}</p>
+              <p class="card-title">{{ object.name }}</p>
+              <p class="card-text">{{ object.description|truncatechars:100 }}</p>              
+            </div>
+            <div class="card-footer d-flex flex-column align-content-center">
               <p class="card-text">{{ object.price }} руб.</p>
-              <a href="{% url 'catalog:detail' object.pk %}" class="btn btn-primary">Открыть</a>
+              <a href="{% url 'catalog:detail' object.pk %}" class="btn btn-danger">Открыть</a>
             </div>
           </div>
         </div>

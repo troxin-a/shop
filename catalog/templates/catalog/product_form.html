@@ -6,7 +6,7 @@
   <div class="container d-flex justify-content-center">
     <form class="mt-4" method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <h3 class="mb-3 text-center">Добавить товар</h3>
+      <h3 class="mb-3 text-center">{{ title }}</h3>
       <div class="mb-3">
         <label for="category" class="form-label">Категория</label>
         <select name="category" class="form-select" id="category" aria-label="Default select example" required>
@@ -24,12 +24,12 @@
       <div class="mb-3">
         <label for="name" class="form-label">Наименование</label>
         <input name="name" type="text" class="form-control" id="name"
-        {% if object %}value={{object.name}}{% endif %}
+        {% if object %}value="{{ object.name }}"{% endif %}
         required>
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Описание</label>
-        <textarea name="description" class="form-control" id="description" rows="3">{% if object %}{{object.description}}{% endif %}</textarea>        
+        <textarea name="description" class="form-control" id="description" rows="5">{% if object %}{{object.description}}{% endif %}</textarea>        
       </div>
       <div class="mb-3">
         <label for="price" class="form-label">Цена (руб)</label>
