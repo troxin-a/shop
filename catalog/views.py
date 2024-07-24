@@ -1,87 +1,82 @@
-import os
-from config.settings import MEDIA_ROOT
-from django.shortcuts import redirect, render
-from django.core.paginator import Paginator
+from django.core.mail import EmailMessage, send_mail
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import (
+    DeleteView,
+    DetailView,
+    ListView,
+    CreateView,
+    UpdateView,
+)
 
 from catalog.models import Category, Contacts, Product
 
 
-def index(request):
-    page_number = request.GET.get("page", 1)
+class ProductCreateView(CreateView):
+    model = Product
+    fields = "__all__"
+    success_url = reverse_lazy("catalog:index")
 
-    products = Product.objects.order_by("-id")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Добавление товара"
+        context["categories"] = Category.objects.all()
+        return context
 
-    paginator = Paginator(products, 8)
-    current_page = paginator.page(page_number)
 
-    context = {
+class ProductUpdateView(UpdateView):
+    model = Product
+    fields = "__all__"
+    success_url = reverse_lazy("catalog:index")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Редактирование товара"
+        context["categories"] = Category.objects.all()
+        return context
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = "catalog/index.html"
+    paginate_by = 8
+    extra_context = {
         "title": "Аптека-лека ГЛАВНАЯ",
-        "objects_list": current_page,
     }
-    return render(request, "catalog/index.html", context)
 
 
-def detail(request, pk):
-    product = Product.objects.get(pk=pk)
-    title = f"Аптека-лека: {product}"
+class ProductDetailView(DetailView):
+    model = Product
 
-    context = {
-        "title": title,
-        "product": product,
-    }
-    return render(request, "catalog/detail.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = self.object.name
+        return context
 
 
-def handle_uploaded_file(f):
-    file_path = os.path.join(MEDIA_ROOT, Product.image.field.upload_to, f.name)
-
-    with open(file_path, "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+class ProductDeleteView(DeleteView):
+    model = Product
+    success_url = reverse_lazy("catalog:index")
 
 
-def add_product(request):
-    if request.method == "POST":
-        category = Category.objects.get(pk=request.POST.get("category"))
-        name = request.POST.get("name")
-        description = request.POST.get("description")
-        price = request.POST.get("price", 0)
-        image = request.FILES.get("image")
+class ContactListView(ListView):
+    model = Contacts
+    template_name = "catalog/contacts.html"
+    extra_context = {"title": "Обратная связь"}
 
-        Product.objects.create(
-            category=category,
-            name=name,
-            description=description,
-            price=price,
-            image=image,
-        )
-
-        if image:
-            handle_uploaded_file(request.FILES.get("image"))
-        return redirect("catalog:detail", Product.objects.all().last().pk)
-
-    categories = Category.objects.all()
-
-    context = {
-        "title": "Добавление продукта",
-        "categories": categories,
-    }
-    return render(request, "catalog/add.html", context)
-
-
-def contacts(request):
-    if request.method == "POST":
+    def post(self, request, *args, **kwargs):
         name = request.POST.get("name")
         email = request.POST.get("email")
         text = request.POST.get("text")
-        print(name, email, text, sep="\n")
+
+        text_email = f"Имя: {name}\n" + f"Почта: {email}\n" + f"Текст письма: {text}"
+
+        email = EmailMessage(
+            subject="Письмо с обратной связи",
+            body=text_email,
+            from_email="anthonpashinov@yandex.ru",
+            to=["anthonpashinov@yandex.ru"],
+        )
+        email.send(fail_silently=False)
 
         return redirect("catalog:index")
-
-    contacts = Contacts.objects.all()
-
-    context = {
-        "title": "Аптека-лека КОНТАКТЫ",
-        "contacts": contacts,
-    }
-    return render(request, "catalog/contacts.html", context)

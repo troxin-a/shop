@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block content %}
+  <div class="container d-flex justify-content-center">
+    <form class="mt-4" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <h3 class="mb-3 text-center">{{ title }}</h3>
+      <div class="mb-3">
+        <label for="title" class="form-label">Название статьи</label>
+        <input name="title" type="text" class="form-control" id="title" value="{% if object %}{{ object.title }}{% endif %}" required />
+      </div>
+      <div class="mb-3">
+        <label for="content" class="form-label">Содержимое</label>
+        <textarea name="content" class="form-control" id="content" rows="5"
+          required>{% if object %}{{ object.content }}{% endif %}</textarea>
+      </div>
+      <div class="mb-3">
+        <label for="preview" class="form-label">Изображение</label>
+        {% if object and object.preview %}
+          <div class="container d-flex justify-content-center">
+            <div class="mb-3" style="width: 100px;">
+              <img src="{{ object.preview|media_filter }}" class="card-img-top" />
+            </div>
+          </div>
+        {% endif %}
+        <input name="preview" class="form-control" id="preview" type="file" />
+      </div>
+      <div class="mb-3">
+        <label for="is_published" class="form-label">Опубликовать</label>
+        {% if object and object.is_published %}
+          <input type="checkbox" name="is_published" id="is_published" checked />
+        {% else %}
+          <input type="checkbox" name="is_published" id="is_published" />
+        {% endif %}
+      </div>
+      <input type="hidden"
+        name="slug"
+        id="slug"
+        value="{% if object %}
+          {{ object.slug }}
+        {% else %}
+          default
+        {% endif %}"
+        required />
+      <button class="btn btn-danger mb-3 w-100" type="submit">
+        {% if object %}
+          Сохранить
+        {% else %}
+          Добавить
+        {% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}
