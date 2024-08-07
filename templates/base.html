@@ -9,7 +9,7 @@
     <link rel="icon" href="{% static 'src/img/favicon.png' %}" />
     <link href="{% static 'src/css/bootstrap.css' %}" rel="stylesheet" />
   </head>
-  <body class="d-flex flex-column min-vh-100">
+  <body class="min-vh-100">
     <nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'catalog:index' %}">
@@ -73,8 +73,10 @@
       </footer>
     </div>
 
+    {% block footer %}{% endblock  %}
+
     <script src="{% static 'src/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'src/js/popper.min.js' %}"></script>
-    <script src="{% static 'src/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'src/js/bootstrap.min.js' %}"></script>    
   </body>
 </html>
