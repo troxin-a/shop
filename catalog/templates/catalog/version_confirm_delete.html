@@ -7,11 +7,11 @@
 
     <div class="row mt-4">
         <div class="col-12">
-            <h2 class="display-5">Удалить продукт {{ object.name }}?</h2>
+            <h2 class="display-5">Удалить версию {{ object }}?</h2>
             <form method="post">
               {% csrf_token %}
               <button type="submit" class="btn btn-danger">Ок</button>
-              <a class="btn btn-primary" href="{% url "catalog:index" %}">Отмена</a>
+              <a class="btn btn-primary" href="{% url "catalog:detail" object.product.pk %}">Отмена</a>
             </form>
         </div>
     </div>

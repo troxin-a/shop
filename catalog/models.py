@@ -19,7 +19,7 @@ class Category(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "категорию"
+        verbose_name = "категория"
         verbose_name_plural = "Категории"
 
 
@@ -27,17 +27,14 @@ class Product(models.Model):
     name = models.CharField(
         max_length=50,
         verbose_name="Наименование",
-        help_text="Введите название продукта",
     )
     description = models.TextField(
         verbose_name="Описание",
-        help_text="Введите описание продукта",
         **NULLABLE,
     )
     image = models.ImageField(
         upload_to="products/",
         verbose_name="Изображение",
-        help_text="Выберите изображение продукта",
         **NULLABLE,
     )
     category = models.ForeignKey(
@@ -45,12 +42,10 @@ class Product(models.Model):
         on_delete=models.SET_NULL,
         related_name="products",
         verbose_name="Категория",
-        help_text="Выберите категорию продукта",
         **NULLABLE,
     )
     price = models.IntegerField(
         verbose_name="Цена",
-        help_text="Введите цену продукта",
         default=0,
     )
     created_at = models.DateField(
@@ -68,6 +63,32 @@ class Product(models.Model):
     class Meta:
         verbose_name = "продукт"
         verbose_name_plural = "Продукты"
+        ordering = ("id",)
+
+
+class Version(models.Model):
+    product = models.ForeignKey(
+        to=Product,
+        on_delete=models.CASCADE,
+        related_name="versions",
+        verbose_name="Продукт",
+        **NULLABLE,
+    )
+    number = models.PositiveIntegerField(
+        verbose_name="Номер версии",
+    )
+    name = models.CharField(
+        max_length=50,
+        verbose_name="Название версии",
+    )
+    is_current = models.BooleanField(verbose_name="Текущая", default=False)
+
+    def __str__(self) -> str:
+        return f"{self.number} - {self.name}"
+
+    class Meta:
+        verbose_name = "версия"
+        verbose_name_plural = "Версии"
         ordering = ("id",)
 
 

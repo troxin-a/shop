@@ -12,13 +12,11 @@
     </div>
 
     <div class="row mt-4">
-      <div class="col-4">
-        {% if product.image %}
-          <img src="{{ product.image|media_filter }}" class="card-img-top" alt="{{ product.name }}" />
-        {% endif %}
+      <div class="col-4">        
+          <img src="{% if product.image %}{{ product.image|media_filter }}{% endif %}" class="card-img-top" alt="{{ product.name }}" />        
       </div>
 
-      <div class="col-8">        
+      <div class="col-8 mb-4">        
         <p class="lead">Категория: {{ product.category }}</p>
         <p class="lead">Описание: {{ product.description }}</p>
         <p class="lead">Цена {{ product.price }} руб.</p>
@@ -27,5 +25,28 @@
         <a href="{% url 'catalog:delete' product.pk %}" class="btn btn-danger">Удалить</a>
       </div>
     </div>
+
+    <a class="btn btn-danger m-4" href="{% url "catalog:version-create" object.pk %}">Добавить версию</a>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Версия</th>
+          <th scope="col">Название версии</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for version in versions %}
+        <tr class="{% if version.is_current %}table-success{% endif %}">
+          <td><div class="d-flex position-relative">{{ version.number }}{% if version.is_current %} (текущая){% endif %}<a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a></div></td>
+          <td><div class="d-flex position-relative">{{ version.name }}<a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a></div></td>          
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 {% endblock %}
+
+
+{% block footer %}
+<script src="{% static 'src/js/autoform.js' %}"></script>
+{% endblock  %}
