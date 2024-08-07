@@ -97,7 +97,7 @@ class VersionUpdateView(UpdateView):
     form_class = VersionForm
 
     def get_success_url(self):
-        # Переадрессация после успешного создания на товар
+        # Переадрессация на товар после успешного редактирования версии
         return reverse("catalog:detail", args=[self.object.product_id])
 
     def get_context_data(self, **kwargs):
@@ -124,7 +124,7 @@ class VersionCreateView(CreateView):
         return kwargs
 
     def get_success_url(self):
-        # Переадрессация после успешного создания на товар
+        # Переадрессация на товар после успешного создания версии
         return reverse("catalog:detail", args=[self.kwargs.get("pk")])
 
 
