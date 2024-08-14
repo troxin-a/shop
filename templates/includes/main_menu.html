@@ -1,0 +1,54 @@
+{% load static %}
+
+<header>
+    <nav class="navbar navbar-expand-lg bg-danger" data-bs-theme="dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'catalog:index' %}">
+          <img src="{% static 'src/img/favicon.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-text-top" />
+          АПТЕКА-ЛЕКА
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'catalog:index' %}">Главная</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/contacts/' %}active{% endif %}" href="{% url 'catalog:contacts' %}">Контакты</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/blog/' %}active{% endif %}" href="{% url 'blog:list' %}">Блог</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'users:profile' %}">Профиль</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:logout' %}">Выход</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/create/' %}active{% endif %}" href="{% url 'catalog:create' %}">Добавить товар</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/blog/create/' %}active{% endif %}" href="{% url 'blog:create' %}">Добавить статью</a>
+            </li>
+              {% if user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
+              </li>
+              {% endif %}
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:login' %}">Вход</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
+            </li>
+            {% endif %}           
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
