@@ -3,7 +3,7 @@
 {% load my_tags %}
 
 {% block content %}
-  <div class="container">
+  <div class="container mb-4">
 
     <div class="row mt-4">
         <div class="col-12">
@@ -16,19 +16,22 @@
           <img src="{% if product.image %}{{ product.image|media_filter }}{% endif %}" class="card-img-top" alt="{{ product.name }}" />        
       </div>
 
-      <div class="col-8 mb-4">        
+      <div class="col-8 mb-4">
         <p class="lead">Категория: {{ product.category }}</p>
-        <p class="lead">Описание: {{ product.description }}</p>
-        <p class="lead">Цена {{ product.price }} руб.</p>
+        <p class="lead">Описание: {{ product.description }}</p>        
+        <p class="lead">Владелец: {% if product.owner %}{{ product.owner.get_full_name }}{% else %}бесхозный{% endif %}</p>
+        <p class="lead">Цена: <strong>{{ product.price }}</strong> руб.</p>
         <a href="{% url 'catalog:index' %}" class="btn btn-success">Назад</a>
+        {% if user.is_authenticated %}
         <a href="{% url 'catalog:update' product.pk %}" class="btn btn-primary">Редактировать</a>
         <a href="{% url "catalog:version-create" object.pk %}" class="btn btn-primary">Добавить версию</a>
         <a href="{% url 'catalog:delete' product.pk %}" class="btn btn-danger">Удалить</a>
+        {% endif %}
       </div>
     </div>
 
     {% if versions %}
-    <table class="table table-hover">
+    <table class="table {% if user.is_authenticated %}table-hover{% endif %}">
       <thead>
         <tr>
           <th scope="col">Версия</th>
@@ -38,8 +41,20 @@
       <tbody>
         {% for version in versions %}
         <tr class="{% if version.is_current %}table-success{% endif %}">
-          <td><div class="d-flex position-relative">{{ version.number }}{% if version.is_current %} (текущая){% endif %}<a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a></div></td>
-          <td><div class="d-flex position-relative">{{ version.name }}<a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a></div></td>          
+          <td>
+            <div class="d-flex position-relative">{{ version.number }}{% if version.is_current %} (текущая){% endif %}
+              {% if user.is_authenticated %}
+              <a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a>
+              {% endif %}
+            </div>
+          </td>
+          <td>
+            <div class="d-flex position-relative">{{ version.name }}
+              {% if user.is_authenticated %}
+              <a href="{% url "catalog:version-update" version.pk %}" class="stretched-link"></a>
+              {% endif %}
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

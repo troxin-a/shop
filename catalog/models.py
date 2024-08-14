@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {"null": True, "blank": True}
 
 
@@ -55,6 +57,13 @@ class Product(models.Model):
     updated_at = models.DateField(
         auto_now=True,
         verbose_name="Дата изменения",
+    )
+    owner = models.ForeignKey(
+        to=User,
+        related_name="products",
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        **NULLABLE,
     )
 
     def __str__(self) -> str:

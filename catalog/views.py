@@ -8,19 +8,40 @@ from django.views.generic import (
     CreateView,
     UpdateView,
 )
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from catalog.forms import ProductForm, VersionForm
 from catalog.models import Contacts, Product, Version
 
 
-class ProductCreateView(CreateView):
+class CustomLoginRequiredMixin(LoginRequiredMixin):
+    """
+    Миксин запрещает url для анонимных пользователей
+    перенаправляет на авторизацию
+    """
+
+    login_url = reverse_lazy("users:login")
+
+
+class ProductCreateView(CustomLoginRequiredMixin, CreateView):
+    """Создание продукта"""
+
+    redirect_field_name = "redirect_to"
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("catalog:index")
     extra_context = {"title": "Новый товар"}
 
+    def form_valid(self, form):
+        if form.is_valid():
+            obj = form.save()
+            obj.owner = self.request.user
+        return super().form_valid(form)
 
-class ProductUpdateView(UpdateView):
+
+class ProductUpdateView(CustomLoginRequiredMixin, UpdateView):
+    """Редактирование продукта"""
+
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy("catalog:index")
@@ -28,6 +49,8 @@ class ProductUpdateView(UpdateView):
 
 
 class ProductListView(ListView):
+    """Список продуктов (главная страница)"""
+
     model = Product
     template_name = "catalog/index.html"
     paginate_by = 6
@@ -47,6 +70,8 @@ class ProductListView(ListView):
 
 
 class ProductDetailView(DetailView):
+    """Просмотр продукта"""
+
     model = Product
 
     def get_context_data(self, **kwargs):
@@ -61,15 +86,16 @@ class ProductDetailView(DetailView):
         return context_data
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(CustomLoginRequiredMixin, DeleteView):
+    """Удаление продукта"""
+
     model = Product
     success_url = reverse_lazy("catalog:index")
 
 
 class ContactListView(ListView):
-    """
-    Отправка почты с формы обратной связи
-    """
+    """Обратная связь с формой отправки письма"""
+
     model = Contacts
     template_name = "catalog/contacts.html"
     extra_context = {"title": "Обратная связь"}
@@ -92,7 +118,9 @@ class ContactListView(ListView):
         return redirect("catalog:index")
 
 
-class VersionUpdateView(UpdateView):
+class VersionUpdateView(CustomLoginRequiredMixin, UpdateView):
+    """Изменение одной из версий продукта"""
+
     model = Version
     form_class = VersionForm
 
@@ -106,7 +134,9 @@ class VersionUpdateView(UpdateView):
         return context
 
 
-class VersionCreateView(CreateView):
+class VersionCreateView(CustomLoginRequiredMixin, CreateView):
+    """Добавление версии продукта"""
+
     model = Version
     form_class = VersionForm
 
@@ -116,19 +146,28 @@ class VersionCreateView(CreateView):
         context["product_id"] = self.kwargs.get("pk")  # Для кнопки "Назад"
         return context
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        # Передача pk в инициализацию формы для
-        # авто-заполнения продукта из адресной строки        
-        kwargs.update(initial = {"product": self.kwargs.get("pk")})
-        return kwargs
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     # Передача pk в инициализацию формы для
+    #     # авто-заполнения продукта из адресной строки
+    #     kwargs.update(initial = {"product": self.kwargs.get("pk")})
+    #     return kwargs
+
+    def get_initial(self):
+        """Передача данных в форму"""
+        initial = super().get_initial()
+        # Автозаполнение продукта из адресной строки
+        initial["product"] = self.kwargs.get("pk")
+        return initial
 
     def get_success_url(self):
         # Переадрессация на товар после успешного создания версии
         return reverse("catalog:detail", args=[self.kwargs.get("pk")])
 
 
-class VersionDeleteView(DeleteView):
+class VersionDeleteView(CustomLoginRequiredMixin, DeleteView):
+    """Удаление версии продукта"""
+
     model = Version
     extra_context = {"title": "Удаление версии"}
 
