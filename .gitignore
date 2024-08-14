@@ -187,4 +187,3 @@ fabric.properties
 templates_only
 .pylintrc
 db.sqlite3
-media
