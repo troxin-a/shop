@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {"null": True, "blank": True}
 
 
@@ -19,6 +21,13 @@ class Article(models.Model):
     is_published = models.BooleanField(default=False, verbose_name="Опубликован")
     views_count = models.IntegerField(
         verbose_name="Количество просмотров", default=0, **NULLABLE
+    )
+    owner = models.ForeignKey(
+        to=User,
+        related_name="articles",
+        on_delete=models.SET_NULL,
+        verbose_name="Владелец",
+        **NULLABLE,
     )
 
     def __str__(self) -> str:

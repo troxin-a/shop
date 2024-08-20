@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
@@ -8,9 +9,13 @@ from django.views.generic import (
     CreateView,
     UpdateView,
 )
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, ProductFormModerator, VersionForm
 from catalog.models import Contacts, Product, Version
 
 
@@ -23,11 +28,37 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy("users:login")
 
 
-class ProductCreateView(CustomLoginRequiredMixin, CreateView):
+class ProductListMixin:
+    model = Product
+    paginate_by = 6
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["title"] = "Аптека-лека ГЛАВНАЯ"
+
+        # Передаем в контест ТЕКУЩИЕ версии продуктов, расположенных
+        # на странице пагинатора с оптимизацией запроса
+        products = context_data["page_obj"]
+        context_data["versions"] = Version.objects.filter(
+            product__in=products, is_current=True
+        ).select_related("product")
+
+        return context_data
+
+
+class OwnerAccessMixin(UserPassesTestMixin):
+    """Разрешение для владельца"""
+
+    def test_func(self):
+        product = Product.objects.get(pk=self.kwargs.get("pk"))
+        return product.owner == self.request.user
+
+
+class ProductCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """Создание продукта"""
 
-    redirect_field_name = "redirect_to"
     model = Product
+    permission_required = "catalog.add_product"
     form_class = ProductForm
     success_url = reverse_lazy("catalog:index")
     extra_context = {"title": "Новый товар"}
@@ -43,30 +74,61 @@ class ProductUpdateView(CustomLoginRequiredMixin, UpdateView):
     """Редактирование продукта"""
 
     model = Product
-    form_class = ProductForm
     success_url = reverse_lazy("catalog:index")
     extra_context = {"title": "Редактирование товара"}
 
+    def get_success_url(self) -> str:
+        return reverse("catalog:detail", args=[self.object.pk])
 
-class ProductListView(ListView):
+    def get_form_class(self):
+        """
+        Если имеются права модератора, указываем форму модератора.
+        Если это просто владелец товара, указываем полную форму товара
+        В остальных случаях редактирование запрещено
+        """
+        if self.request.user.has_perms(
+            [
+                "catalog.cancel_product_is_publish",
+                "catalog.can_change_product_description",
+                "catalog.can_change_product_category",
+            ]
+        ):
+            return ProductFormModerator
+        elif self.request.user == self.object.owner:
+            return ProductForm
+        raise PermissionDenied
+
+    def post(self, request, *args, **kwargs):
+        """
+        Проверка на установку публикации.
+        Модератор может снимать с публикации, но не публиковать
+        """
+        if self.request.user.has_perm("catalog.cancel_product_is_publish"):
+            obj = self.get_object()
+            check_btn_is_publushed = True if request.POST.get("is_published") else False
+            if not obj.is_published and check_btn_is_publushed:
+                return redirect(reverse_lazy("catalog:index"))
+        return super().post(request, *args, **kwargs)
+
+
+class ProductListView(ProductListMixin, ListView):
     """Список продуктов (главная страница)"""
 
-    model = Product
     template_name = "catalog/index.html"
-    paginate_by = 6
 
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        context_data["title"] = "Аптека-лека ГЛАВНАЯ"
+    def get_queryset(self):
+        """Только опубликованные продукты"""
+        return super().get_queryset().filter(is_published=True)
 
-        # Передаем в контест ТЕКУЩИЕ версии продуктов, расположенных
-        # на странице пагинатора с оптимизацией запроса
-        products = context_data["page_obj"]
-        context_data["versions"] = Version.objects.filter(
-            product__in=products, is_current=True
-        ).select_related("product")
 
-        return context_data
+class ProductListOwnerView(ProductListMixin, ListView):
+    """Список продуктов продавца"""
+
+    template_name = "catalog/product_list_owner.html"
+
+    def get_queryset(self):
+        """Только владелец может видеть свои продукты"""
+        return super().get_queryset().filter(owner=self.request.user)
 
 
 class ProductDetailView(DetailView):
@@ -86,7 +148,7 @@ class ProductDetailView(DetailView):
         return context_data
 
 
-class ProductDeleteView(CustomLoginRequiredMixin, DeleteView):
+class ProductDeleteView(CustomLoginRequiredMixin, OwnerAccessMixin, DeleteView):
     """Удаление продукта"""
 
     model = Product
@@ -118,11 +180,14 @@ class ContactListView(ListView):
         return redirect("catalog:index")
 
 
-class VersionUpdateView(CustomLoginRequiredMixin, UpdateView):
+class VersionUpdateView(CustomLoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Изменение одной из версий продукта"""
 
     model = Version
     form_class = VersionForm
+
+    def test_func(self):
+        return self.get_object().product.owner == self.request.user
 
     def get_success_url(self):
         # Переадрессация на товар после успешного редактирования версии
@@ -134,7 +199,7 @@ class VersionUpdateView(CustomLoginRequiredMixin, UpdateView):
         return context
 
 
-class VersionCreateView(CustomLoginRequiredMixin, CreateView):
+class VersionCreateView(CustomLoginRequiredMixin, OwnerAccessMixin, CreateView):
     """Добавление версии продукта"""
 
     model = Version
@@ -145,13 +210,6 @@ class VersionCreateView(CustomLoginRequiredMixin, CreateView):
         context["title"] = "Новая версия"
         context["product_id"] = self.kwargs.get("pk")  # Для кнопки "Назад"
         return context
-
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     # Передача pk в инициализацию формы для
-    #     # авто-заполнения продукта из адресной строки
-    #     kwargs.update(initial = {"product": self.kwargs.get("pk")})
-    #     return kwargs
 
     def get_initial(self):
         """Передача данных в форму"""
@@ -165,11 +223,14 @@ class VersionCreateView(CustomLoginRequiredMixin, CreateView):
         return reverse("catalog:detail", args=[self.kwargs.get("pk")])
 
 
-class VersionDeleteView(CustomLoginRequiredMixin, DeleteView):
+class VersionDeleteView(CustomLoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление версии продукта"""
 
     model = Version
     extra_context = {"title": "Удаление версии"}
+
+    def test_func(self):
+        return self.get_object().product.owner == self.request.user
 
     def get_success_url(self):
         # Переадрессация после успешного удаления на товар

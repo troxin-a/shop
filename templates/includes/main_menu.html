@@ -21,32 +21,34 @@
             </li>
           </ul>
           <ul class="navbar-nav">
+            {% if perms.catalog.add_product %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/create/' %}active{% endif %}" href="{% url 'catalog:product_list_owner' %}">Мои продукты</a>
+            </li>
+            {% endif %}
             {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/blog/my-blog/' %}active{% endif %}" href="{% url 'blog:my_blog' %}">Мои статьи</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'users:profile' %}">Профиль</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:logout' %}">Выход</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.path == '/create/' %}active{% endif %}" href="{% url 'catalog:create' %}">Добавить товар</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.path == '/blog/create/' %}active{% endif %}" href="{% url 'blog:create' %}">Добавить статью</a>
-            </li>
-              {% if user.is_staff %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
-              </li>
-              {% endif %}
-            {% else %}
+            </li>              
+            {% else %}            
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:login' %}">Вход</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:register' %}">Регистрация</a>
             </li>
-            {% endif %}           
+            {% endif %}
+            {% if user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin:index' %}">Админка</a>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>

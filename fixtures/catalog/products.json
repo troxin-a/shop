@@ -9,7 +9,8 @@
             "category": 2,
             "price": 2061,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -22,7 +23,8 @@
             "category": 2,
             "price": 1371,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -35,7 +37,8 @@
             "category": 2,
             "price": 91,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -48,7 +51,8 @@
             "category": 4,
             "price": 80,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -61,7 +65,8 @@
             "category": 4,
             "price": 483,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -74,7 +79,8 @@
             "category": 4,
             "price": 44,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -87,7 +93,8 @@
             "category": 6,
             "price": 515,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -100,7 +107,8 @@
             "category": 6,
             "price": 50,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -113,7 +121,8 @@
             "category": 6,
             "price": 205,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -126,7 +135,8 @@
             "category": 5,
             "price": 307,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -139,7 +149,8 @@
             "category": 5,
             "price": 350,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -152,7 +163,8 @@
             "category": 1,
             "price": 200,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     },
     {
@@ -165,7 +177,8 @@
             "category": 1,
             "price": 700,
             "created_at": "2024-07-24",
-            "updated_at": "2024-07-24"
+            "updated_at": "2024-07-24",
+            "is_published": true
         }
     }
 ]

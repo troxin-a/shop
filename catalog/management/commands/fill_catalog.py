@@ -64,6 +64,7 @@ class Command(BaseCommand):
             price = product["fields"].get("price")
             created_at = product["fields"].get("created_at")
             updated_at = product["fields"].get("updated_at")
+            is_published = product["fields"].get("is_published")
 
             product_for_create.append(
                 Product(
@@ -74,6 +75,7 @@ class Command(BaseCommand):
                     price=price,
                     created_at=created_at,
                     updated_at=updated_at,
+                    is_published=is_published,
                 )
             )
 
