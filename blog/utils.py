@@ -30,10 +30,12 @@ def send_congratulation(article):
     """
 
     text = f'Статья "{article.title.capitalize()}" уже имеет 100 просмотров!'
+    recipient = article.owner.email
 
-    email = EmailMessage(
-        subject="Поздравление",
-        body=text,
-        to=(EMAIL_ADMIN,),
-    )
-    email.send(fail_silently=False)
+    if recipient:
+        email = EmailMessage(
+            subject="Поздравление",
+            body=text,
+            to=(recipient,),
+        )
+        email.send(fail_silently=False)
