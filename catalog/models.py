@@ -65,6 +65,10 @@ class Product(models.Model):
         verbose_name="Владелец",
         **NULLABLE,
     )
+    is_published = models.BooleanField(
+        verbose_name="Опубликован",
+        default=False,
+    )
 
     def __str__(self) -> str:
         return self.name
@@ -73,6 +77,11 @@ class Product(models.Model):
         verbose_name = "продукт"
         verbose_name_plural = "Продукты"
         ordering = ("id",)
+        permissions = [
+            ("cancel_product_is_publish", "Can cancel product is_publish"),
+            ("can_change_product_description", "Can change product description"),
+            ("can_change_product_category", "Can change product category"),
+        ]
 
 
 class Version(models.Model):
@@ -98,7 +107,7 @@ class Version(models.Model):
     class Meta:
         verbose_name = "версия"
         verbose_name_plural = "Версии"
-        ordering = ("id",)
+        ordering = ("-id",)
 
 
 class Contacts(models.Model):

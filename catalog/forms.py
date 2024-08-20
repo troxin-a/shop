@@ -48,6 +48,7 @@ class ProductForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
             "description",
             "image",
             "price",
+            "is_published",
         ]
 
     def clean_name(self):
@@ -59,11 +60,19 @@ class ProductForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
         return self.clean_forbidden_words("description")
 
 
+class ProductFormModerator(ProductForm):
+    class Meta:
+        model = Product
+        fields = [
+            "category",
+            "description",
+            "is_published",
+        ]
+
+
 class VersionForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
     """Форма для заполнения полей версии продукта"""
 
-    # Скрываем поле product, т.к. оно должно быть заполнено автоматически
-    product = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Version
@@ -73,6 +82,12 @@ class VersionForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
             "name",
             "is_current",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Скрываем поле product, т.к. оно должно быть заполнено автоматически
+        self.fields.get("product").widget = forms.HiddenInput()
+
 
     def clean_name(self):
         """Валидация поля name"""
