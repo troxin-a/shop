@@ -1,9 +1,5 @@
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
-from django.db.models import Q
-from django.forms import BaseModelForm, ValidationError
-from django.http import HttpRequest
-from django.http.response import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -61,7 +57,6 @@ class OwnerAccessMixin(UserPassesTestMixin):
 class ProductCreateView(CustomLoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """Создание продукта"""
 
-    # redirect_field_name = "redirect_to"
     model = Product
     permission_required = "catalog.add_product"
     form_class = ProductForm

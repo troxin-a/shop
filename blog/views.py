@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -9,6 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from blog.forms import ArticleModelForm
 from blog.models import Article
 from blog.utils import generate_slug, send_congratulation
 from catalog.views import CustomLoginRequiredMixin
@@ -19,11 +22,29 @@ class ArticleListView(ListView):
 
     model = Article
     paginate_by = 5
+    extra_context = {"title": "Блог"}
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(is_published=True)
-        return queryset
+        """
+        Только опубликованные статьи для всех
+        Все статьи - для модератора
+        """
+        gueryset = super().get_queryset()
+        if self.request.user.has_perm("blog.change_article"):
+            return gueryset
+        return gueryset.filter(is_published=True)
+
+
+class ArticleListOwnerView(ListView):
+    """Список статей владельца"""
+
+    model = Article
+    paginate_by = 5
+    extra_context = {"title": "Мои статьи"}
+
+    def get_queryset(self):
+        """Только статьи владельца"""
+        return super().get_queryset().filter(owner=self.request.user)
 
 
 class ArticleDetailView(DetailView):
@@ -32,25 +53,22 @@ class ArticleDetailView(DetailView):
     model = Article
 
     def get_object(self, queryset=None):
-        object = super().get_object()
-        object.views_count += 1
-        object.save()
+        obj = super().get_object()
+        obj.views_count += 1
+        obj.save()
 
-        if object.views_count == 100:
-            send_congratulation(object)
+        if obj.views_count == 100:
+            send_congratulation(obj)
 
-        # if not object.is_published:
-        #     raise Http404("Статья не найдена или не опубликована")
-
-        return object
+        return obj
 
 
 class ArticleCreateView(CustomLoginRequiredMixin, CreateView):
     """Создание статьи"""
 
     model = Article
-    fields = "__all__"
-    success_url = reverse_lazy("blog:list")
+    form_class = ArticleModelForm
+    success_url = reverse_lazy("blog:my_blog")
     extra_context = {"title": "Добавление статьи"}
 
     def form_valid(self, form):
@@ -59,6 +77,9 @@ class ArticleCreateView(CustomLoginRequiredMixin, CreateView):
 
             # Генерация слага
             new_article.slug = generate_slug(Article, new_article.title)
+
+            # Назначение владельца
+            new_article.owner = self.request.user
 
             # Заполнение даты публикации при нажатии соответствующего флага
             if new_article.is_published:
@@ -75,12 +96,18 @@ class ArticleUpdateView(CustomLoginRequiredMixin, UpdateView):
     """Редактирование статьи"""
 
     model = Article
-    fields = "__all__"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = "Изменение статьи"
         return context
+
+    def get_form_class(self):
+        if self.object.owner == self.request.user or self.request.user.has_perm(
+            "blog.change_article"
+        ):
+            return ArticleModelForm
+        raise PermissionDenied
 
     def form_valid(self, form):
         if form.is_valid():
@@ -100,8 +127,13 @@ class ArticleUpdateView(CustomLoginRequiredMixin, UpdateView):
         return reverse("blog:detail", args=[self.kwargs.get("pk")])
 
 
-class ArticleDeleteView(CustomLoginRequiredMixin, DeleteView):
+class ArticleDeleteView(CustomLoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Удаление статьи"""
+
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.has_perm(
+            "blog.delete_article"
+        )
 
     model = Article
     success_url = reverse_lazy("blog:list")

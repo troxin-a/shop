@@ -5,37 +5,36 @@
 {% block content %}
   <div class="container d-flex flex-column align-items-center">
     <div class="row mt-5">
-      <h1>Статьи</h1>
+      <h1>{{ title }}</h1>
     </div>
-
+    <div class="m-2">
+      <a class="btn btn-danger" href="{% url 'blog:create' %}">Добавить статью</a>
+    </div>
 
     <div class="row mb-2">
       {% for object in page_obj %}
-
-      <div class="col-md-12">
-        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-          <div class="col p-4 d-flex flex-column position-static">            
-            <h3 class="mb-0">{{ object.title }}</h3>
-            <div class="mb-1 text-body-secondary">{{ object.published_at }}</div>            
-            <p class="card-text mb-auto">{{ object.content|truncatechars:300 }}</p>
-            <div class="mb-1 text-body-secondary">Просмотров: {{ object.views_count }}</div>   
-            <a href="{% url 'blog:detail' object.pk %}" class="icon-link gap-1 icon-link-hover stretched-link">
-              Продолжить чтение               
-            </a>          
-            
-          </div>
-          <div class="col-auto d-none d-lg-block">
-            {% if object.preview %}
-              <img height=250 src="{{ object.preview|media_filter }}" class="card-img-top" alt="{{ object.title }}" />
-            {% endif %}
+        <div class="col-md-12">
+          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+              <h3 class="mb-0">{{ object.title }}</h3>
+              {% if object.is_published %}
+                <div class="mb-1 text-body-secondary">{{ object.published_at }}</div>
+              {% else %}
+                <div class="mb-1 text-bg-warning">Не опубликовано</div>
+              {% endif %}                
+              <p class="card-text mb-auto">{{ object.content|truncatechars:300 }}</p>
+              <div class="mb-1 text-body-secondary">Просмотров: {{ object.views_count }}</div>
+              <a href="{% url 'blog:detail' object.pk %}" class="icon-link gap-1 icon-link-hover stretched-link">Продолжить чтение</a>
+            </div>
+            <div class="col-auto d-none d-lg-block">
+              {% if object.preview %}
+                <img height="250" src="{{ object.preview|media_filter }}" class="card-img-top" alt="{{ object.title }}" />
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-
       {% endfor %}
     </div>
-
-
 
     {% if page_obj %}
       <nav>

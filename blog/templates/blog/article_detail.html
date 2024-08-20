@@ -23,8 +23,12 @@
         <p class="lead">Дата публикации: {{ object.published_at }}</p>
         <p class="lead">Просмотров: {{ object.views_count }}</p>
         <a href="{% url 'blog:list' %}" class="btn btn-primary">Назад</a>
-        <a href="{% url 'blog:update' article.pk %}" class="btn btn-warning">Редактировать</a>
-        <a href="{% url 'blog:delete' article.pk %}" class="btn btn-danger">Удалить</a>
+        {% if object.owner == user or perms.blog.change_article %}
+        <a href="{% url 'blog:update' object.pk %}" class="btn btn-warning">Редактировать</a>
+        {% endif %}
+        {% if perms.blog.delete_article or user.is_superuser %}
+        <a href="{% url 'blog:delete' object.pk %}" class="btn btn-danger">Удалить</a>
+        {% endif %}
     </div>
   </div>
 {% endblock %}
