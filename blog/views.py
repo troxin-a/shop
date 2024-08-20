@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -123,7 +123,6 @@ class ArticleUpdateView(CustomLoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        # return reverse("blog:detail", args=(self.object.pk,))
         return reverse("blog:detail", args=[self.kwargs.get("pk")])
 
 
