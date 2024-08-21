@@ -73,7 +73,6 @@ class ProductFormModerator(ProductForm):
 class VersionForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
     """Форма для заполнения полей версии продукта"""
 
-
     class Meta:
         model = Version
         fields = [
@@ -87,7 +86,6 @@ class VersionForm(StyleFormMixin, ForbiddenWordsMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Скрываем поле product, т.к. оно должно быть заполнено автоматически
         self.fields.get("product").widget = forms.HiddenInput()
-
 
     def clean_name(self):
         """Валидация поля name"""

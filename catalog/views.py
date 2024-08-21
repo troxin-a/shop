@@ -1,5 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
+from django.forms import BaseModelForm
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -80,6 +82,23 @@ class ProductUpdateView(CustomLoginRequiredMixin, UpdateView):
     def get_success_url(self) -> str:
         return reverse("catalog:detail", args=[self.object.pk])
 
+    def get_form(self, form_class=None):
+        """Если товар не опубликован, отключаем флаг публикации для модератора"""
+        form = super().get_form(form_class)
+        if (
+            self.request.user.has_perms(
+                [
+                    "catalog.cancel_product_is_publish",
+                    "catalog.can_change_product_description",
+                    "catalog.can_change_product_category",
+                ]
+            )
+            and not self.object.is_published
+        ):
+            form.fields["is_published"].disabled = True
+            # del form.fields["is_published"]
+        return form
+
     def get_form_class(self):
         """
         Если имеются права модератора, указываем форму модератора.
@@ -100,8 +119,8 @@ class ProductUpdateView(CustomLoginRequiredMixin, UpdateView):
 
     def post(self, request, *args, **kwargs):
         """
-        Проверка на установку публикации.
-        Модератор может снимать с публикации, но не публиковать
+        Дополнительная проверка на установку публикации.
+        Модератор может снимать с публикации, но не публиковать!
         """
         if self.request.user.has_perm("catalog.cancel_product_is_publish"):
             obj = self.get_object()
