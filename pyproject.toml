@@ -13,6 +13,8 @@ pytils = "^0.4.1"
 django-countries = "^7.6.1"
 django = "4.2.9"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.0.0"}
+redis = "^5.0.8"
+python-dotenv = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

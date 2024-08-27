@@ -5,7 +5,7 @@
 {% block content %}
   <div class="container">
     <div class="row pt-4">      
-      <h1 class="text-center">В провинции никого не пугает.</h1>
+      <h1 class="text-center">{{ title }}</h1>
       <p>Также как выбранный нами инновационный путь говорит о возможностях модели развития. Разнообразный и богатый опыт говорит нам, что глубокий уровень погружения является качественно новой ступенью экспериментов, поражающих по своей масштабности и грандиозности. Повседневная практика показывает, что внедрение современных методик, а также свежий взгляд на привычные вещи — безусловно открывает новые горизонты для прогресса профессионального сообщества.</p>
     </div>
 
@@ -29,13 +29,11 @@
                   <p class="card-text"><strong>{{ object.price }} руб.</strong></p>
                 </div>
                 <div>
-                  <p class="card-text">                    
-                  {% for version in versions %}
-                    {% if version.product.pk == object.pk %}
-                      Текущая версия: {{ version.number }}
-                    {% endif %}
-                  {% endfor %}
+                  {% if object.version %}
+                  <p class="card-text">
+                  Текущая версия: {{ object.version.number }}
                   </p>
+                  {% endif %}
                 </div>
               </div>
               <a href="{% url 'catalog:detail' object.pk %}" class="btn btn-danger">Открыть</a>
