@@ -1,7 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMessage
-from django.forms import BaseModelForm
-from django.http import HttpRequest, HttpResponse
+
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
@@ -18,7 +17,14 @@ from django.contrib.auth.mixins import (
 )
 
 from catalog.forms import ProductForm, ProductFormModerator, VersionForm
-from catalog.models import Contacts, Product, Version
+from catalog.models import Category, Contacts, Product, Version
+from catalog.services import (
+    get_categories_from_cache,
+    get_product_counts_by_category_from_cache,
+    get_products_from_cache,
+    get_version_from_cache,
+)
+from config.settings import EMAIL_ADMIN
 
 
 class CustomLoginRequiredMixin(LoginRequiredMixin):
@@ -36,14 +42,9 @@ class ProductListMixin:
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["title"] = "Аптека-лека ГЛАВНАЯ"
 
-        # Передаем в контест ТЕКУЩИЕ версии продуктов, расположенных
-        # на странице пагинатора с оптимизацией запроса
-        products = context_data["page_obj"]
-        context_data["versions"] = Version.objects.filter(
-            product__in=products, is_current=True
-        ).select_related("product")
+        for product in context_data["page_obj"]:
+            product.version = get_version_from_cache(product.pk)
 
         return context_data
 
@@ -134,16 +135,18 @@ class ProductListView(ProductListMixin, ListView):
     """Список продуктов (главная страница)"""
 
     template_name = "catalog/index.html"
+    extra_context = {"title": "Аптека-лека ГЛАВНАЯ"}
 
     def get_queryset(self):
         """Только опубликованные продукты"""
-        return super().get_queryset().filter(is_published=True)
+        return get_products_from_cache()
 
 
 class ProductListOwnerView(ProductListMixin, ListView):
     """Список продуктов продавца"""
 
     template_name = "catalog/product_list_owner.html"
+    extra_context = {"title": "Мои продукты"}
 
     def get_queryset(self):
         """Только владелец может видеть свои продукты"""
@@ -174,6 +177,38 @@ class ProductDeleteView(CustomLoginRequiredMixin, OwnerAccessMixin, DeleteView):
     success_url = reverse_lazy("catalog:index")
 
 
+class CategoryListView(ListView):
+    """Список категорий"""
+
+    paginate_by = 50
+    extra_context = {"title": "Категории"}
+
+    def get_queryset(self):
+        return get_categories_from_cache()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Получаем количество товаров для каждой категории
+        for category in context["category_list"]:
+            category.count = get_product_counts_by_category_from_cache(category)
+        return context
+
+
+class ProductByCategoryListView(ProductListMixin, ListView):
+    """Список товаров по категориям"""
+
+    template_name = "catalog/index.html"
+
+    def get_queryset(self):
+        """Только опубликованные продукты конкретной категории"""
+        return get_products_from_cache(self.kwargs.get("pk"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = Category.objects.get(pk=self.kwargs.get("pk"))
+        return context
+
+
 class ContactListView(ListView):
     """Обратная связь с формой отправки письма"""
 
@@ -191,8 +226,7 @@ class ContactListView(ListView):
         email = EmailMessage(
             subject="Письмо с обратной связи",
             body=text_email,
-            from_email="anthonpashinov@yandex.ru",
-            to=["anthonpashinov@yandex.ru"],
+            to=[EMAIL_ADMIN],
         )
         email.send(fail_silently=False)
 
