@@ -23,7 +23,7 @@
 
 - Python 3.10
 - Django 4.2
-- PostgreSQL (или другая поддерживаемая БД)
+- PostgreSQL
 
 ### Установка
 
@@ -50,40 +50,24 @@ python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
-5. **Заполните настройки подключения к серверу в config/settings.py:**
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql', # пример с PostgreSQL
-        'NAME': 'your_database', # Имя БД
-        'HOST': 'localhost', # Адрес сервера БД
-        'USER': 'your_user', # Имя владельца БД
-        'PASSWORD': 'your_password', # Пароль владельца БД
-        'PORT': 'your_port', # Если был изменен порт по умолчанию
-    }
-}
+5. **Заполните настройки сервера .env.sample:**
+```bash
+cp .env.sample .env
+nano .env
 ```
 
-6. **Заполните настройки подключения к smtp-серверу в config/settings.py:**
-```python
-EMAIL_HOST = "smtp-server"
-EMAIL_PORT = "port"
-EMAIL_HOST_USER = "example@mail.com"
-EMAIL_HOST_PASSWORD = "pass"
-```
-
-7. **Заполните базы несколькими товарами, если необходимо:**
+6. **Заполните базы несколькими товарами, если необходимо:**
 ```bash
 python3 manage.py fill_blog
 python3 manage.py fill_catalog
 ```
 
-8. **Создайте суперпользователя для доступа к административной панели:**
+7. **Создайте суперпользователя для доступа к административной панели:**
 ```bash
 python3 manage.py csu
 ```
 
-9. **Запустите локальный сервер:**
+8. **Запустите локальный сервер:**
 ```bash
 python3 manage.py runserver
 ```
