@@ -2,6 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![Django](https://img.shields.io/badge/Django-4.2-brightgreen)
+![Redis](https://img.shields.io/badge/Redis-6.0-red)
 
 ## 📦 О проекте
 
@@ -24,6 +25,7 @@
 - Python 3.10
 - Django 4.2
 - PostgreSQL
+- Redis
 
 ### Установка
 
